@@ -39,6 +39,7 @@ function render() {
   }
   for (const f of NUM_FIELDS) if (document.activeElement !== $(f)) $(f).value = settings[f];
   $('escalate').checked = settings.escalate;
+  $('reblockOpen').checked = settings.reblockOpen;
   $('escOpts').classList.toggle('off', !settings.escalate);
 }
 
@@ -81,6 +82,7 @@ $('add').addEventListener('submit', (e) => {
 for (const f of NUM_FIELDS) {
   $(f).addEventListener('change', () => { settings[f] = $(f).value; save(); });
 }
+$('reblockOpen').addEventListener('change', () => { settings.reblockOpen = $('reblockOpen').checked; save(); });
 $('escalate').addEventListener('change', () => { settings.escalate = $('escalate').checked; save(); });
 
 $('reset').addEventListener('click', async () => {

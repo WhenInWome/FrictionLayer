@@ -6,7 +6,8 @@ const FL = (() => {
     escalate: false,      // add incrementSeconds for every open already made today
     incrementSeconds: 3,
     maxSeconds: 0,        // 0 = no cap on escalated countdown
-    graceMinutes: 5       // free browsing in that tab after a countdown; 0 = every navigation
+    graceMinutes: 5,      // free browsing for the site after a countdown; 0 = every navigation
+    reblockOpen: true     // when the grace period ends, send already-open tabs back to the countdown
   };
 
   function int(value, fallback, min = 0, max = 86400) {
@@ -22,7 +23,8 @@ const FL = (() => {
       escalate: Boolean(s.escalate),
       incrementSeconds: int(s.incrementSeconds, DEFAULTS.incrementSeconds),
       maxSeconds: int(s.maxSeconds, DEFAULTS.maxSeconds),
-      graceMinutes: int(s.graceMinutes, DEFAULTS.graceMinutes, 0, 1440)
+      graceMinutes: int(s.graceMinutes, DEFAULTS.graceMinutes, 0, 1440),
+      reblockOpen: Boolean(s.reblockOpen)
     };
   }
 
