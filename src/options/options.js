@@ -7,6 +7,7 @@ async function load() {
   const stored = await browser.storage.local.get('settings');
   settings = FL.sanitizeSettings(stored.settings);
   render();
+  renderHours();
   renderToday();
 }
 
@@ -40,7 +41,41 @@ function render() {
   for (const f of NUM_FIELDS) if (document.activeElement !== $(f)) $(f).value = settings[f];
   $('escalate').checked = settings.escalate;
   $('reblockOpen').checked = settings.reblockOpen;
+  $('scheduleEnabled').checked = settings.scheduleEnabled;
+  $('hoursBox').classList.toggle('off', !settings.scheduleEnabled);
+  $('hoursStatus').textContent = settings.scheduleEnabled
+    ? (settings.hours.length ? '' : 'No time ranges: FrictionLayer is never active.') +
+      (FL.isActive(settings) ? ' Active right now.' : ' Not active right now.')
+    : 'Active all day.';
   $('escOpts').classList.toggle('off', !settings.escalate);
+}
+
+function renderHours() {
+  const list = $('hours');
+  list.replaceChildren(...settings.hours.map((range, i) => {
+    const li = document.createElement('li');
+    const span = document.createElement('span');
+    const mk = (key, label) => {
+      const input = document.createElement('input');
+      input.type = 'time';
+      input.value = FL.minutesToTime(range[key]);
+      input.setAttribute('aria-label', label);
+      input.onchange = () => {
+        const m = FL.timeToMinutes(input.value);
+        if (m < 0) { input.value = FL.minutesToTime(range[key]); return; }
+        settings.hours[i][key] = m;
+        save();
+      };
+      return input;
+    };
+    span.append(mk('start', 'Start time'), ' to ', mk('end', 'End time'));
+    const rm = document.createElement('button');
+    rm.type = 'button';
+    rm.textContent = 'Remove';
+    rm.onclick = () => { settings.hours.splice(i, 1); save(); renderHours(); };
+    li.append(span, rm);
+    return li;
+  }));
 }
 
 async function renderToday() {
@@ -83,6 +118,12 @@ for (const f of NUM_FIELDS) {
   $(f).addEventListener('change', () => { settings[f] = $(f).value; save(); });
 }
 $('reblockOpen').addEventListener('change', () => { settings.reblockOpen = $('reblockOpen').checked; save(); });
+$('scheduleEnabled').addEventListener('change', () => { settings.scheduleEnabled = $('scheduleEnabled').checked; save(); });
+$('addHours').addEventListener('click', () => {
+  settings.hours.push({ start: 9 * 60, end: 17 * 60 });
+  save();
+  renderHours();
+});
 $('escalate').addEventListener('change', () => { settings.escalate = $('escalate').checked; save(); });
 
 $('reset').addEventListener('click', async () => {

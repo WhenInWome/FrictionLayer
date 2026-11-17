@@ -7,7 +7,12 @@ const FL = (() => {
     incrementSeconds: 3,
     maxSeconds: 0,        // 0 = no cap on escalated countdown
     graceMinutes: 5,      // free browsing for the site after a countdown; 0 = every navigation
-    reblockOpen: true     // when the grace period ends, send already-open tabs back to the countdown
+    reblockOpen: true,    // when the grace period ends, send already-open tabs back to the countdown
+    scheduleEnabled: true,  // only apply during the hour ranges below
+    hours: [              // minutes since local midnight; end < start wraps past midnight
+      { start: 9 * 60, end: 12 * 60 },
+      { start: 13 * 60, end: 17 * 60 }
+    ]
   };
 
   function int(value, fallback, min = 0, max = 86400) {
@@ -24,9 +29,31 @@ const FL = (() => {
       incrementSeconds: int(s.incrementSeconds, DEFAULTS.incrementSeconds),
       maxSeconds: int(s.maxSeconds, DEFAULTS.maxSeconds),
       graceMinutes: int(s.graceMinutes, DEFAULTS.graceMinutes, 0, 1440),
-      reblockOpen: Boolean(s.reblockOpen)
+      reblockOpen: Boolean(s.reblockOpen),
+      scheduleEnabled: Boolean(s.scheduleEnabled),
+      hours: sanitizeHours(s.hours)
     };
   }
+
+  function sanitizeHours(raw) {
+    if (!Array.isArray(raw)) return DEFAULTS.hours.map((r) => ({ ...r }));
+    return raw
+      .map((r) => ({ start: int(r && r.start, -1, -1, 1439), end: int(r && r.end, -1, -1, 1439) }))
+      .filter((r) => r.start >= 0 && r.end >= 0 && r.start !== r.end);
+  }
+
+  /** Is the friction layer on at this moment? (always, unless a schedule is enabled) */
+  function isActive(settings, date = new Date()) {
+    if (!settings.scheduleEnabled) return true;
+    const m = date.getHours() * 60 + date.getMinutes();
+    return settings.hours.some((r) => (r.start < r.end ? m >= r.start && m < r.end : m >= r.start || m < r.end));
+  }
+
+  const timeToMinutes = (t) => {
+    const m = /^(\d{1,2}):(\d{2})/.exec(t || '');
+    return m ? Math.min(1439, Number(m[1]) * 60 + Number(m[2])) : -1;
+  };
+  const minutesToTime = (n) => `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`;
 
   /** "https://www.Reddit.com/r/x", "*.reddit.com", "reddit.com" -> "reddit.com"; "" if invalid. */
   function normalizeSite(input) {
@@ -72,7 +99,7 @@ const FL = (() => {
     return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}`;
   }
 
-  return { DEFAULTS, sanitizeSettings, normalizeSite, findSite, computeSeconds, dayKey };
+  return { DEFAULTS, sanitizeSettings, normalizeSite, findSite, computeSeconds, dayKey, isActive, timeToMinutes, minutesToTime };
 })();
 
 if (typeof module !== 'undefined') module.exports = FL;

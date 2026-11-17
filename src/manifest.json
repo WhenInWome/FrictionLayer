@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "FrictionLayer",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Adds a countdown before distracting websites load. Optionally makes the wait longer every time you open them in a day.",
   "browser_specific_settings": {
     "gecko": {

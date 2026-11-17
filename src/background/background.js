@@ -27,7 +27,7 @@ browser.webRequest.onBeforeRequest.addListener(
     if (details.tabId < 0) return {};
     const settings = await getSettings();
     const site = FL.findSite(details.url, settings.sites);
-    if (!site) return {};
+    if (!site || !FL.isActive(settings)) return {};
     const passes = await getPasses();
     if (passes[passKey(site)]) return {};
     return { redirectUrl: `${INTERSTITIAL}?target=${encodeURIComponent(details.url)}` };
@@ -73,7 +73,7 @@ browser.alarms.onAlarm.addListener(async (alarm) => {
   if (!alarm.name.startsWith(ALARM_PREFIX)) return;
   const site = alarm.name.slice(ALARM_PREFIX.length);
   const settings = await getSettings();
-  if (!settings.reblockOpen || !settings.sites.includes(site)) return;
+  if (!settings.reblockOpen || !settings.sites.includes(site) || !FL.isActive(settings)) return;
   const passes = await getPasses();
   if (passes[passKey(site)]) return; // renewed in the meantime
   const tabs = await browser.tabs.query({ url: [`*://${site}/*`, `*://*.${site}/*`] });

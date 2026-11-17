@@ -23,7 +23,9 @@ li { display:flex; justify-content:space-between; align-items:center; padding:.3
 li:first-child { border-top:0; }
 .row { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:.5rem 0; flex-wrap:wrap; }
 .check { justify-content:flex-start; }
-#escOpts.off { opacity:.5; }
+#escOpts.off, #hoursBox.off { opacity:.5; }
+input[type=time] { font:inherit; color:var(--fg); background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:.3rem .5rem; }
+#hours li span { display:flex; align-items:center; gap:8px; }
 table { width:100%; border-collapse:collapse; margin-bottom:.75rem; }
 td, th { text-align:left; padding:.3rem 0; border-top:1px solid var(--border); } th { color:var(--muted); font-weight:500; }
 tr:first-child td, tr:first-child th { border-top:0; }

@@ -38,3 +38,32 @@ test('sanitizeSettings clamps junk', () => {
   assert.equal(s.incrementSeconds, 0);
   assert.deepEqual(s.sites, ['reddit.com']);
 });
+
+test('isActive follows the default 9-12 / 13-17 schedule', () => {
+  const s = FL.sanitizeSettings({});
+  const at = (h, m = 0) => FL.isActive(s, new Date(2026, 0, 5, h, m));
+  assert.equal(at(8, 59), false);
+  assert.equal(at(9), true);
+  assert.equal(at(11, 59), true);
+  assert.equal(at(12), false);
+  assert.equal(at(12, 59), false);
+  assert.equal(at(13), true);
+  assert.equal(at(16, 59), true);
+  assert.equal(at(17), false);
+  assert.equal(FL.isActive({ ...s, scheduleEnabled: false }, new Date(2026, 0, 5, 3)), true);
+});
+
+test('isActive supports ranges past midnight and empty ranges', () => {
+  const s = { ...FL.sanitizeSettings({}), hours: [{ start: 22 * 60, end: 2 * 60 }] };
+  assert.equal(FL.isActive(s, new Date(2026, 0, 5, 23)), true);
+  assert.equal(FL.isActive(s, new Date(2026, 0, 5, 1)), true);
+  assert.equal(FL.isActive(s, new Date(2026, 0, 5, 12)), false);
+  assert.equal(FL.isActive({ ...s, hours: [] }, new Date(2026, 0, 5, 12)), false);
+});
+
+test('time helpers and hours sanitising', () => {
+  assert.equal(FL.minutesToTime(13 * 60 + 5), '13:05');
+  assert.equal(FL.timeToMinutes('09:30'), 570);
+  assert.equal(FL.timeToMinutes(''), -1);
+  assert.deepEqual(FL.sanitizeSettings({ hours: [{ start: 60, end: 60 }, { start: 'x' }, { start: 60, end: 120 }] }).hours, [{ start: 60, end: 120 }]);
+});

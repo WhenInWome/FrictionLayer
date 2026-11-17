@@ -7,6 +7,7 @@ A Firefox extension that puts a countdown in front of distracting websites.
 - Optional **escalating timers**: each open of a site during the day adds N seconds (default **3 s**, adjustable, optional cap). Counts are per site and reset at local midnight.
 - After a countdown you can browse that site freely in any tab for a grace period (default 5 min; 0 = wait every time).
 - When the grace period ends, already-open tabs of that site are sent back to the countdown (optional, on by default).
+- Optional **active hours** (default 9am-noon and 1pm-5pm, every day): outside them listed sites load normally.
 - The countdown only advances while the tab is visible and its window is focused.
 
 ## Build / test

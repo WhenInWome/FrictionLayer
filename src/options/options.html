@@ -28,6 +28,17 @@
     </section>
 
     <section>
+      <h2>Active hours</h2>
+      <label class="row check"><input id="scheduleEnabled" type="checkbox"> Only apply FrictionLayer during these hours (every day)</label>
+      <div id="hoursBox">
+        <ul id="hours"></ul>
+        <button id="addHours" type="button">Add time range</button>
+        <p id="hoursStatus" class="muted small"></p>
+      </div>
+      <p class="muted small">Outside these hours, listed sites load normally. A range that ends before it starts runs past midnight. With no ranges, it is never active. Untick the box to apply it all day.</p>
+    </section>
+
+    <section>
       <h2>Countdown</h2>
       <label class="row">Default countdown
         <span><input id="baseSeconds" type="number" min="0" max="3600"> seconds</span></label>
