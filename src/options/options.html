@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FrictionLayer settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <main>
+    <h1>FrictionLayer</h1>
+    <p class="muted">Sites below show a countdown before they load.</p>
+
+    <div id="perm" class="banner" hidden>
+      FrictionLayer needs permission to access websites to intercept them.
+      <button id="grant" type="button">Grant access</button>
+    </div>
+
+    <section>
+      <h2>Sites</h2>
+      <form id="add" autocomplete="off">
+        <input id="site" type="text" placeholder="reddit.com" aria-label="Website to add" required>
+        <button type="submit">Add</button>
+      </form>
+      <p id="err" class="error" hidden></p>
+      <ul id="sites"></ul>
+      <p class="muted small">Subdomains are included (reddit.com also covers old.reddit.com).</p>
+    </section>
+
+    <section>
+      <h2>Countdown</h2>
+      <label class="row">Default countdown
+        <span><input id="baseSeconds" type="number" min="0" max="3600"> seconds</span></label>
+      <label class="row">After the countdown, browse that site in the tab freely for
+        <span><input id="graceMinutes" type="number" min="0" max="1440"> minutes</span></label>
+      <p class="muted small">Set to 0 to wait again on every page load. The countdown only runs while the tab is visible.</p>
+    </section>
+
+    <section>
+      <h2>Escalating timers</h2>
+      <label class="row check"><input id="escalate" type="checkbox"> Make the countdown longer for each open during the day</label>
+      <div id="escOpts">
+        <label class="row">Add
+          <span><input id="incrementSeconds" type="number" min="0" max="3600"> seconds per open</span></label>
+        <label class="row">Maximum countdown
+          <span><input id="maxSeconds" type="number" min="0" max="86400"> seconds (0 = no limit)</span></label>
+        <p class="muted small">Counted per site, resets at local midnight. A site's first open uses the default countdown.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Today</h2>
+      <table id="today"></table>
+      <button id="reset" type="button">Reset today's counts</button>
+    </section>
+  </main>
+  <script src="../lib/common.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

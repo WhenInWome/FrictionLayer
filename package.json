@@ -1,0 +1,10 @@
+{
+  "name": "frictionlayer",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build": "mkdir -p dist && rm -f dist/frictionlayer.zip && cd src && zip -r -X ../dist/frictionlayer.zip . -x '*.DS_Store'"
+  }
+}
