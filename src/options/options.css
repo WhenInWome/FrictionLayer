@@ -1,0 +1,29 @@
+:root { --bg:#f6f5fb; --card:#fff; --fg:#1d1b2e; --muted:#6a667f; --accent:#5b4bdb; --border:#d8d4ee; --err:#c0293b; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#14131f; --card:#1e1c30; --fg:#ecebf7; --muted:#9b97b3; --accent:#8f82ff; --border:#3a3757; --err:#ff8593; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 system-ui, sans-serif; }
+main { max-width:640px; margin:0 auto; padding:24px 16px 48px; }
+h1 { margin:0; } h2 { font-size:1.05rem; margin:0 0 .75rem; }
+section { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; margin:16px 0; }
+.muted { color:var(--muted); } .small { font-size:.85rem; margin:.5rem 0 0; }
+.error { color:var(--err); margin:.5rem 0 0; }
+.banner { background:var(--card); border:1px solid var(--err); border-radius:12px; padding:12px 16px; margin:16px 0; }
+input[type=text], input[type=number] { font:inherit; color:var(--fg); background:var(--bg); border:1px solid var(--border);
+  border-radius:8px; padding:.4rem .6rem; }
+input[type=number] { width:6.5rem; } #site { flex:1; }
+button { font:inherit; color:var(--fg); background:var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:.4rem .9rem; cursor:pointer; }
+button:hover { border-color:var(--accent); }
+:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+#add { display:flex; gap:8px; }
+ul { list-style:none; padding:0; margin:.75rem 0 0; }
+li { display:flex; justify-content:space-between; align-items:center; padding:.35rem 0; border-top:1px solid var(--border); }
+li:first-child { border-top:0; }
+.row { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:.5rem 0; flex-wrap:wrap; }
+.check { justify-content:flex-start; }
+#escOpts.off { opacity:.5; }
+table { width:100%; border-collapse:collapse; margin-bottom:.75rem; }
+td, th { text-align:left; padding:.3rem 0; border-top:1px solid var(--border); } th { color:var(--muted); font-weight:500; }
+tr:first-child td, tr:first-child th { border-top:0; }

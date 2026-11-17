@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hold on…</title>
+  <link rel="stylesheet" href="interstitial.css">
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Opening</p>
+    <h1 id="site">…</h1>
+    <div class="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="track" cx="60" cy="60" r="54"/>
+        <circle class="bar" id="bar" cx="60" cy="60" r="54"/>
+      </svg>
+      <div class="count" id="count" role="timer" aria-live="off">…</div>
+    </div>
+    <p id="note" class="note"></p>
+    <button id="back" type="button">Never mind, take me back</button>
+  </main>
+  <script src="../lib/common.js"></script>
+  <script src="interstitial.js"></script>
+</body>
+</html>
