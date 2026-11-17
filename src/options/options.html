@@ -33,7 +33,8 @@
         <span><input id="baseSeconds" type="number" min="0" max="3600"> seconds</span></label>
       <label class="row">After the countdown, browse that site freely, in any tab, for
         <span><input id="graceMinutes" type="number" min="0" max="1440"> minutes</span></label>
-      <p class="muted small">Set to 0 to wait again on every page load (including new tabs). The countdown only runs while the tab is visible.</p>
+      <label class="row check"><input id="reblockOpen" type="checkbox"> When that time is up, send already-open tabs of the site back to the countdown</label>
+      <p class="muted small">Set the time to 0 to wait again on every page load (including new tabs). The countdown only runs while the tab is visible. Returning to a re-blocked tab counts as another open for escalation, and the page reloads after the countdown, so unsaved input on it is lost.</p>
     </section>
 
     <section>

@@ -55,11 +55,32 @@ browser.runtime.onMessage.addListener(async (msg, sender) => {
       await browser.storage.local.set({ counts });
       if (settings.graceMinutes > 0) {
         const passes = await getPasses();
-        passes[passKey(site)] = Date.now() + settings.graceMinutes * 60000;
+        const expires = Date.now() + settings.graceMinutes * 60000;
+        passes[passKey(site)] = expires;
         await browser.storage.session.set({ passes });
+        // Same alarm name replaces any earlier alarm for this site.
+        if (settings.reblockOpen) browser.alarms.create(ALARM_PREFIX + site, { when: expires + 500 });
       }
     }
     return { ok: true };
+  }
+});
+
+const ALARM_PREFIX = 'expire|';
+
+// When a site's grace period ends, send its open tabs back through the countdown.
+browser.alarms.onAlarm.addListener(async (alarm) => {
+  if (!alarm.name.startsWith(ALARM_PREFIX)) return;
+  const site = alarm.name.slice(ALARM_PREFIX.length);
+  const settings = await getSettings();
+  if (!settings.reblockOpen || !settings.sites.includes(site)) return;
+  const passes = await getPasses();
+  if (passes[passKey(site)]) return; // renewed in the meantime
+  const tabs = await browser.tabs.query({ url: [`*://${site}/*`, `*://*.${site}/*`] });
+  for (const tab of tabs) {
+    if (FL.findSite(tab.url, [site])) {
+      browser.tabs.update(tab.id, { url: `${INTERSTITIAL}?target=${encodeURIComponent(tab.url)}` });
+    }
   }
 });
 
