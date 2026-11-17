@@ -53,11 +53,33 @@ async function main() {
   render();
   if (remaining <= 0) return finish();
 
-  // The clock only advances while this tab is visible, so a background tab can't wait it out.
+  // The clock only advances while this tab is the visible tab of the focused Firefox window,
+  // so a background tab or an unfocused browser can't wait it out.
+  let myWindowId = null;
+  let windowFocused = false;
+  try {
+    const win = await browser.windows.getCurrent();
+    myWindowId = win.id;
+    windowFocused = win.focused;
+  } catch (e) {
+    windowFocused = true; // windows API unavailable: fall back to visibility only
+  }
+  browser.windows.onFocusChanged.addListener((id) => {
+    windowFocused = id !== browser.windows.WINDOW_ID_NONE && id === myWindowId;
+  });
+
+  const baseNote = $('note').textContent;
+  let wasRunning = null;
+  last = performance.now();
   setInterval(() => {
     const now = performance.now();
-    if (document.visibilityState === 'visible') remaining -= now - last;
+    const running = document.visibilityState === 'visible' && windowFocused;
+    if (running) remaining -= now - last;
     last = now;
+    if (running !== wasRunning) {
+      wasRunning = running;
+      $('note').textContent = running ? baseNote : 'Paused. The countdown runs while this window is in focus.';
+    }
     render();
     if (remaining <= 0) finish();
   }, 100);
