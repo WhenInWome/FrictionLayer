@@ -16,4 +16,4 @@ npm run build     # produces dist/frictionlayer.zip (upload to addons.mozilla.or
 ```
 
 For temporary local testing: `about:debugging` → This Firefox → Load Temporary Add-on → pick `src/manifest.json`.
-Firefox 115+ required. The extension needs access to all websites to intercept the pages you choose.
+Firefox 140+ (Android 142+) required. The extension needs access to all websites to intercept the pages you choose.

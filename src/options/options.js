@@ -46,8 +46,13 @@ async function renderToday() {
   const { counts } = await browser.storage.local.get('counts');
   const today = counts && counts.date === FL.dayKey() ? counts.sites : {};
   const table = $('today');
-  const header = '<tr><th>Site</th><th>Opens</th><th>Next countdown</th></tr>';
-  table.innerHTML = header;
+  table.replaceChildren();
+  const head = table.insertRow();
+  for (const label of ['Site', 'Opens', 'Next countdown']) {
+    const th = document.createElement('th');
+    th.textContent = label;
+    head.append(th);
+  }
   if (!settings.sites.length) return;
   for (const site of settings.sites) {
     const opens = today[site] || 0;
@@ -88,7 +93,9 @@ async function checkPermission() {
   $('perm').hidden = ok;
 }
 $('grant').addEventListener('click', async () => {
-  await browser.permissions.request({ origins: ['<all_urls>'] });
+  if (browser.permissions && browser.permissions.request) {
+    await browser.permissions.request({ origins: ['<all_urls>'] });
+  }
   checkPermission();
 });
 
