@@ -20,7 +20,7 @@ async function getPasses() {
   return Object.fromEntries(Object.entries(passes || {}).filter(([, expires]) => expires > now));
 }
 
-const passKey = (tabId, site) => `${tabId}|${site}`;
+const passKey = (site) => site;
 
 browser.webRequest.onBeforeRequest.addListener(
   async (details) => {
@@ -29,7 +29,7 @@ browser.webRequest.onBeforeRequest.addListener(
     const site = FL.findSite(details.url, settings.sites);
     if (!site) return {};
     const passes = await getPasses();
-    if (passes[passKey(details.tabId, site)]) return {};
+    if (passes[passKey(site)]) return {};
     return { redirectUrl: `${INTERSTITIAL}?target=${encodeURIComponent(details.url)}` };
   },
   { urls: ['http://*/*', 'https://*/*'], types: ['main_frame'] },
@@ -55,7 +55,7 @@ browser.runtime.onMessage.addListener(async (msg, sender) => {
       await browser.storage.local.set({ counts });
       if (settings.graceMinutes > 0) {
         const passes = await getPasses();
-        passes[passKey(sender.tab.id, site)] = Date.now() + settings.graceMinutes * 60000;
+        passes[passKey(site)] = Date.now() + settings.graceMinutes * 60000;
         await browser.storage.session.set({ passes });
       }
     }
